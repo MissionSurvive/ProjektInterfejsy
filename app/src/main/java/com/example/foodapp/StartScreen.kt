@@ -69,7 +69,7 @@ fun StartScreen() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Witamy w FoodApp!",
+                            text = "Witamy w FoodDroid!",
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         )
                     }

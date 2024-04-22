@@ -10,18 +10,18 @@ import com.example.foodapp.AdminScreens.AddScreen
 import com.example.foodapp.AdminScreens.HomeScreen
 
 @Composable
-fun BottomNavGraph(navController: NavHostController) {
+fun AdminBottomNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = AdminScreen.Home.route
+        startDestination = AdminPanel.Home.route
     ) {
-        composable(route = AdminScreen.Home.route) {
+        composable(route = AdminPanel.Home.route) {
             HomeScreen(context = LocalContext.current)
         }
-        composable(route = AdminScreen.Add.route) {
+        composable(route = AdminPanel.Add.route) {
             AddScreen(context = LocalContext.current)
         }
-        composable(route = AdminScreen.Account.route) {
+        composable(route = AdminPanel.Account.route) {
             AccountScreen()
         }
     }

@@ -1,86 +1,139 @@
-package com.example.foodapp.AdminScreens
+package com.example.foodapp.ClientScreens
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.foodapp.DBHandler
 import com.example.foodapp.Foods
-import com.example.foodapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(context: Context) {
+fun MenuScreen(context: Context) {
+
     // Smoothly scroll 100px on first composition
     val state = rememberScrollState()
+    var text by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(false) }
+    var items = remember { mutableStateListOf("<sample_search>") }
     LaunchedEffect(Unit) { state.animateScrollTo(0) }
     Scaffold (
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(text = "Panel Administarcyjny")
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-                )
-            )
+            Column {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(text = "FoodDroid")
+                    },
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                    ))
+                /*SearchBar(
+                    modifier = if(active) {
+                        Modifier
+                            .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
+                    } else {
+                        Modifier
+                            .fillMaxWidth()
+                            .padding()
+                            .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
+                    },
+                    query = text,
+                    onQueryChange = { text = it },
+                    onSearch = {
+                        items.add(text)
+                        active = false
+                        text = "" },
+                    active = active,
+                    onActiveChange = { active = it },
+                    placeholder = {
+                        Text(text="Wyszukaj")
+                    },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
+                    },
+                    trailingIcon = {
+                        if(active) {
+                            Icon(
+                                modifier = Modifier
+                                    .clickable {
+                                        if(text.isNotEmpty()) {
+                                            text = ""
+                                        }
+                                        else {
+                                            active = false
+                                        }
+                                    },
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close icon")
+                        }
+                    },
+
+                    windowInsets = if (active) {
+                        SearchBarDefaults.windowInsets
+                    } else {
+                        WindowInsets(0.dp)
+                    }) {
+                    items.forEach {
+                        Row(modifier = Modifier.padding(all = 14.dp)) {
+                            Icon(
+                                modifier = Modifier.padding(end = 10.dp),
+                                imageVector = Icons.Outlined.History,
+                                contentDescription = "History icon")
+                            Text(text = it)
+                        }
+                    }
+                }*/
+            }
         },
         content = { innerPadding ->
             var dbHandler: DBHandler = DBHandler(context)
@@ -250,53 +303,4 @@ fun FoodCard(
                 .padding(horizontal = 10.dp, vertical = 5.dp)
         )
     }
-}
-
-@Composable
-fun SampleCards() {
-    val cards = remember {
-        mutableStateListOf(
-            CardInfo(
-                image = "no_image",
-                name = "<dish_name>"
-            ),
-            CardInfo(
-                image = "no_image",
-                name = "<dish_name2>"
-            ),
-            CardInfo(
-                image = "no_image",
-                name = "<dish_name3>"
-            )
-        )
-    }
-    cards.forEachIndexed { index, card ->
-        OutlinedCard(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            modifier = Modifier
-                .size(width = 150.dp, height = 150.dp)
-        ) {
-            val image: Painter = painterResource(id = R.drawable.pizza)
-            Image(
-                modifier = Modifier
-                    .size(width = 150.dp, height = 100.dp),
-                painter = image,
-                contentDescription = "",
-                contentScale = ContentScale.Crop
-            )
-            Text(
-                text = card.name,
-                modifier = Modifier
-                    .padding(16.dp),
-            )
-        }
-    }
-}
-
-@Composable
-@Preview
-fun HomeScreenPreview() {
-    HomeScreen(LocalContext.current);
 }
