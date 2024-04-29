@@ -192,7 +192,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { foodName == "" }) {
+                            IconButton(onClick = { foodName = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -231,7 +231,7 @@ fun AddScreen(context: Context, navController: NavController) {
                     ),
 
                     trailingIcon = {
-                        IconButton(onClick = { smallPrice == "" }) {
+                        IconButton(onClick = { smallPrice = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = "Clear button"
@@ -258,7 +258,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { smallKcal == "" }) {
+                            IconButton(onClick = { smallKcal = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -285,7 +285,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { smallPortion == "" }) {
+                            IconButton(onClick = { smallPortion = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -323,7 +323,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { mediumPrice == "" }) {
+                            IconButton(onClick = { mediumPrice = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -350,7 +350,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { mediumKcal == "" }) {
+                            IconButton(onClick = { mediumKcal = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -377,7 +377,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { mediumPortion == "" }) {
+                            IconButton(onClick = { mediumPortion = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -415,7 +415,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { bigPrice == "" }) {
+                            IconButton(onClick = { bigPrice = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -442,7 +442,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Next,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { bigKcal == "" }) {
+                            IconButton(onClick = { bigKcal = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"
@@ -469,7 +469,7 @@ fun AddScreen(context: Context, navController: NavController) {
                             imeAction = ImeAction.Done,
                         ),
                         trailingIcon = {
-                            IconButton(onClick = { bigPortion == "" }) {
+                            IconButton(onClick = { bigPortion = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Clear button"

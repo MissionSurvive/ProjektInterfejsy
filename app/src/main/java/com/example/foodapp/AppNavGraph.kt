@@ -1,6 +1,7 @@
 package com.example.foodapp
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,7 +21,7 @@ fun AppNavGraph() {
             LoginScreen(navController = navController)
         }
         composable(route = AppScreens.RegisterScreen.route) {
-            RegisterScreen(navController = navController)
+            RegisterScreen(LocalContext.current, navController = navController)
         }
         composable(route = AdminPanel.Home.route) {
             AdminScreen()

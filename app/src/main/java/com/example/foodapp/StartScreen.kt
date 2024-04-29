@@ -66,7 +66,7 @@ fun StartScreen(navController: NavController,
     if (showExitDialog.value) {
         AlertDialog(
             onDismissRequest = { showExitDialog.value = false },
-            title = { Text("Opuszczanie apliacji") },
+            title = { Text("Opuszczanie aplikacji") },
             text = { Text("Czy na pewno chcesz opuścić aplikację?") },
             confirmButton = {
                 TextButton(
