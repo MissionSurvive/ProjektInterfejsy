@@ -34,12 +34,10 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController) {
     BackPressHandler {
         navController.navigate(AppScreens.StartScreen.route)
     }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     Scaffold (
         topBar = {
             TopAppBar(
@@ -52,7 +50,7 @@ fun LoginScreen(navController: NavController) {
                     }
                 },
                 title = {
-                    Text(text = "Logowanie")
+                    Text(text = "Rejestracja")
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
@@ -76,17 +74,18 @@ fun LoginScreen(navController: NavController) {
                             .padding(10.dp)
                             .width(270.dp),
                     ) {
+                        var text by remember { mutableStateOf("<e-mail>") }
                         OutlinedTextField(
-                            value = email,
+                            value = text,
                             onValueChange = { newText ->
-                                email = newText
+                                text = newText
                             },
                             label = {
                                 Text("E-mail")
                             },
                             singleLine = true,
                             trailingIcon = {
-                                IconButton(onClick = { email = "" }) {
+                                IconButton(onClick = { /*TODO*/ }) {
                                     Icon(
                                         imageVector = Icons.Default.Clear,
                                         contentDescription = "Clear button"
@@ -99,17 +98,18 @@ fun LoginScreen(navController: NavController) {
                             .padding(10.dp)
                             .width(270.dp),
                     ) {
+                        var text by remember { mutableStateOf("<password>") }
                         OutlinedTextField(
-                            value = password,
+                            value = text,
                             onValueChange = { newText ->
-                                password = newText
+                                text = newText
                             },
                             label = {
                                 Text("Hasło")
                             },
                             singleLine = true,
                             trailingIcon = {
-                                IconButton(onClick = { password = "" }) {
+                                IconButton(onClick = { /*TODO*/ }) {
                                     Icon(
                                         imageVector = Icons.Default.Clear,
                                         contentDescription = "Clear button"
@@ -123,14 +123,8 @@ fun LoginScreen(navController: NavController) {
                             .width(270.dp)
                     ) {
                         Button(
-                            onClick = { if(email == "admin@mail.com" && password == "admin1234") {
-                                navController.navigate(AdminPanel.Home.route)
-                            }
-                                else if(email == "user@mail.com" && password == "user1234") {
-                                    navController.navigate(ClientPanel.Menu.route)
-                            }
-                            }) {
-                            Text("Zaloguj")
+                            onClick = { /*TODO*/ }) {
+                            Text("Zarejestruj")
                         }
                     }
                 }
@@ -140,6 +134,6 @@ fun LoginScreen(navController: NavController) {
 
 @Composable
 @Preview
-fun LoginScreenPreview() {
+fun RegisterScreenPreview() {
     //RegisterScreen();
 }

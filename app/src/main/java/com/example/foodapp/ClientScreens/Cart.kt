@@ -43,19 +43,21 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.foodapp.AdminScreens.CardInfo
+import com.example.foodapp.ClientPanel
 import com.example.foodapp.DBHandler
 import com.example.foodapp.Foods
 import com.example.foodapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(context: Context) {
+fun CartScreen(context: Context, navController: NavController) {
     Scaffold (
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate(ClientPanel.Menu.route) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Go back"

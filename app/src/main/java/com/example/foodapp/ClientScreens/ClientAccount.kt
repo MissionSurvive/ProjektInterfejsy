@@ -24,16 +24,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.foodapp.ClientPanel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountScreen() {
+fun ClientAccountScreen(navController: NavController) {
     Scaffold (
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate(ClientPanel.Menu.route) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Go back"
@@ -158,5 +160,5 @@ fun AccountScreen() {
 @Composable
 @Preview
 fun AccountScreenPreview() {
-    AccountScreen();
+    //ClientAccountScreen();
 }

@@ -33,7 +33,9 @@ fun ClientScreen() {
 
 @Composable
 fun ClientBottomBar(navController: NavHostController) {
+    BackPressHandler {
 
+    }
     val statusBarLight = Color.WHITE
     val statusBarDark = Color.BLACK
     val navigationBarLight = Color.WHITE
@@ -57,7 +59,7 @@ fun ClientBottomBar(navController: NavHostController) {
     val screens = listOf(
         ClientPanel.Menu,
         ClientPanel.Cart,
-        ClientPanel.Account
+        ClientPanel.ClientAccount
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

@@ -19,10 +19,10 @@ fun AdminBottomNavGraph(navController: NavHostController) {
             HomeScreen(context = LocalContext.current)
         }
         composable(route = AdminPanel.Add.route) {
-            AddScreen(context = LocalContext.current)
+            AddScreen(context = LocalContext.current, navController)
         }
         composable(route = AdminPanel.Account.route) {
-            AccountScreen()
+            AccountScreen(navController)
         }
     }
 }

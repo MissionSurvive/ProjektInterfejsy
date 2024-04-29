@@ -1,10 +1,9 @@
 package com.example.foodapp
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.RestaurantMenu
+//import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -16,7 +15,7 @@ sealed class ClientPanel (
     object Menu : ClientPanel(
         route = "menu",
         title = "Menu",
-        icon = Icons.Default.RestaurantMenu
+        icon = Icons.Default.Home
     )
 
     object Cart : ClientPanel(
@@ -25,7 +24,7 @@ sealed class ClientPanel (
         icon = Icons.Default.ShoppingCart
     )
 
-    object Account : ClientPanel(
+    object ClientAccount : ClientPanel(
         route = "account",
         title = "Konto",
         icon = Icons.Default.Person

@@ -5,10 +5,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.foodapp.AdminScreens.AccountScreen
-import com.example.foodapp.AdminScreens.AddScreen
-import com.example.foodapp.AdminScreens.HomeScreen
 import com.example.foodapp.ClientScreens.CartScreen
+import com.example.foodapp.ClientScreens.ClientAccountScreen
 import com.example.foodapp.ClientScreens.MenuScreen
 
 @Composable
@@ -21,10 +19,10 @@ fun ClientBottomNavGraph(navController: NavHostController) {
             MenuScreen(context = LocalContext.current)
         }
         composable(route = ClientPanel.Cart.route) {
-            CartScreen(context = LocalContext.current)
+            CartScreen(context = LocalContext.current, navController)
         }
-        composable(route = ClientPanel.Account.route) {
-            AccountScreen()
+        composable(route = ClientPanel.ClientAccount.route) {
+            ClientAccountScreen(navController)
         }
     }
 }

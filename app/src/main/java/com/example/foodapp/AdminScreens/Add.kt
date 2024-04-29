@@ -63,7 +63,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.foodapp.AdminPanel
 import com.example.foodapp.DBHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -73,7 +75,7 @@ import java.lang.Exception
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddScreen(context: Context) {
+fun AddScreen(context: Context, navController: NavController) {
 
     val activity = context as Activity
 
@@ -112,7 +114,7 @@ fun AddScreen(context: Context) {
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate(AdminPanel.Home.route) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Go back"
@@ -680,5 +682,5 @@ private fun convertUriToByteArray(context: Context, uri: Uri): ByteArray? {
 @Composable
 @Preview
 fun AddScreenPreview() {
-    AddScreen(LocalContext.current);
+    //AddScreen(LocalContext.current);
 }
