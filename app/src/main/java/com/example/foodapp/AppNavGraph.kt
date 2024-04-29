@@ -18,7 +18,7 @@ fun AppNavGraph() {
             StartScreen(navController = navController)
         }
         composable(route = AppScreens.LoginScreen.route) {
-            LoginScreen(navController = navController)
+            LoginScreen(LocalContext.current, navController = navController)
         }
         composable(route = AppScreens.RegisterScreen.route) {
             RegisterScreen(LocalContext.current, navController = navController)

@@ -1,5 +1,7 @@
 package com.example.foodapp
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +39,7 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(context: Context, navController: NavController) {
     BackPressHandler {
         navController.navigate(AppScreens.StartScreen.route)
     }
@@ -139,6 +141,9 @@ fun LoginScreen(navController: NavController) {
                             }
                                 else if(email == "user@mail.com" && password == "user1234") {
                                     navController.navigate(ClientPanel.Menu.route)
+                            }
+                                else {
+                                Toast.makeText(context, "Nieprawidłowy e-mail lub hasło!", Toast.LENGTH_SHORT).show()
                             }
                             }) {
                             Text("Zaloguj")

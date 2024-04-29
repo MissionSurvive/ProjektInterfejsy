@@ -15,24 +15,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,39 +41,28 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.foodapp.AdminPanel
 import com.example.foodapp.DBHandler
 import com.example.foodapp.booleanToInt
 import com.example.foodapp.convertUriToByteArray
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import java.io.IOException
 import java.lang.Exception
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddScreen(context: Context, navController: NavController) {
-
+fun DetailedFoodPropertiesScreen(context: Context, navController: NavController) {
     val activity = context as Activity
 
     var foodName by remember { mutableStateOf("") }
@@ -124,7 +108,7 @@ fun AddScreen(context: Context, navController: NavController) {
                     }
                 },
                 title = {
-                    Text(text = "Dodaj danie")
+                    Text(text = "Edytuj danie")
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
@@ -161,7 +145,10 @@ fun AddScreen(context: Context, navController: NavController) {
                         .width(270.dp)
                 ) {
                     Button(
-                        onClick = { photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
+                        onClick = { photoPickerLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        ) }) {
                         Text("Wybierz zdjęcie")
                     }
                 }
@@ -219,27 +206,27 @@ fun AddScreen(context: Context, navController: NavController) {
                         .width(270.dp),
                 ) {
                     OutlinedTextField(
-                    value = smallPrice,
-                    onValueChange = { newText ->
-                        smallPrice = newText
-                    },
-                    label = {
-                        Text(text = "Cena")
-                    },
-                    singleLine = true,
+                        value = smallPrice,
+                        onValueChange = { newText ->
+                            smallPrice = newText
+                        },
+                        label = {
+                            Text(text = "Cena")
+                        },
+                        singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next,
-                    ),
+                        ),
 
-                    trailingIcon = {
-                        IconButton(onClick = { smallPrice = "" }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear button"
-                            )
-                        }
-                    })
+                        trailingIcon = {
+                            IconButton(onClick = { smallPrice = "" }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Clear button"
+                                )
+                            }
+                        })
                 }
                 Column(
                     modifier = Modifier
@@ -496,7 +483,7 @@ fun AddScreen(context: Context, navController: NavController) {
                         .padding(horizontal = 5.dp)
                 ) {
                     Row(
-                        verticalAlignment = CenterVertically
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Checkbox(
                             checked = isKetchup,
@@ -512,7 +499,7 @@ fun AddScreen(context: Context, navController: NavController) {
                         .padding(horizontal = 5.dp)
                 ) {
                     Row(
-                        verticalAlignment = CenterVertically
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Checkbox(
                             checked = isGarlic,
@@ -622,37 +609,28 @@ fun AddScreen(context: Context, navController: NavController) {
                         .height(60.dp)
                         .width(270.dp)
                 ) {
-                        Button(
+                    Button(
                         onClick = {
-                            try {
-                                if(selectedImageByteArray == null || foodName.isEmpty() || smallPrice.isEmpty() || smallKcal.isEmpty() || smallPortion.isEmpty() || mediumPrice.isEmpty() || mediumKcal.isEmpty() || mediumPortion.isEmpty() || bigPrice.isEmpty() || bigKcal.isEmpty() || bigPortion.isEmpty() || foodCategory.isEmpty()) {
-                                    Toast.makeText(context, "Uzupełnij brakujące dane!", Toast.LENGTH_SHORT).show()
-                                }
-                                else {
-                                    dbHandler.addNewFood(
-                                        image = selectedImageByteArray,
-                                        foodName = foodName,
-                                        smallPrice = smallPrice.toInt(),
-                                        smallKcal = smallKcal.toInt(),
-                                        smallPortion = smallPortion.toInt(),
-                                        mediumPrice = mediumPrice.toInt(),
-                                        mediumKcal = mediumKcal.toInt(),
-                                        mediumPortion = mediumPortion.toInt(),
-                                        bigPrice = bigPrice.toInt(),
-                                        bigKcal = bigKcal.toInt(),
-                                        bigPortion = bigPortion.toInt(),
-                                        isKetchup = booleanToInt(isKetchup),
-                                        isGarlicSauce = booleanToInt(isGarlic),
-                                        foodCategory = foodCategory
-                                    )
-                                    Toast.makeText(context, "Dodano danie pomyślnie!", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                            catch (e: Exception) {
-                                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
-                            }
-                             }) {
-                        Text("Dodaj danie")
+                            /*TODO*/
+                        }) {
+                        Text("Edytuj danie")
+                    }
+                }
+                Surface(
+                    modifier = Modifier
+                        .height(10.dp)
+                        .fillMaxWidth()
+                ) {}
+                Surface(
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(270.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            /*TODO*/
+                        }) {
+                        Text("Usuń danie")
                     }
                 }
                 Surface(
@@ -663,11 +641,5 @@ fun AddScreen(context: Context, navController: NavController) {
             }
         }
     )
-
 }
 
-@Composable
-@Preview
-fun AddScreenPreview() {
-    //AddScreen(LocalContext.current);
-}
