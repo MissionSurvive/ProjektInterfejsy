@@ -22,12 +22,12 @@ import androidx.navigation.compose.rememberNavController
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ClientScreen() {
-    val navController = rememberNavController()
+fun ClientScreen(navController: NavHostController) {
+    val clientNavController = rememberNavController()
     Scaffold(
-        bottomBar = { ClientBottomBar(navController = navController)}
+        bottomBar = { ClientBottomBar(navController = clientNavController)}
     ) {
-        ClientBottomNavGraph(navController = navController)
+        ClientBottomNavGraph(navController = clientNavController, appNavController = navController)
     }
 }
 

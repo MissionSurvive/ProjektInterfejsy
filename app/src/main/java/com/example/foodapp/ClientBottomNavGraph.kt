@@ -10,7 +10,7 @@ import com.example.foodapp.ClientScreens.ClientAccountScreen
 import com.example.foodapp.ClientScreens.MenuScreen
 
 @Composable
-fun ClientBottomNavGraph(navController: NavHostController) {
+fun ClientBottomNavGraph(navController: NavHostController, appNavController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = ClientPanel.Menu.route
@@ -22,7 +22,7 @@ fun ClientBottomNavGraph(navController: NavHostController) {
             CartScreen(context = LocalContext.current, navController)
         }
         composable(route = ClientPanel.ClientAccount.route) {
-            ClientAccountScreen(navController)
+            ClientAccountScreen(navController = navController, appNavController = appNavController)
         }
     }
 }

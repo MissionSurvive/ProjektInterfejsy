@@ -25,12 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.foodapp.AdminPanel
+import com.example.foodapp.AppScreens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountScreen(navController: NavController) {
+fun AccountScreen(navController: NavHostController, appNavController: NavHostController) {
     Scaffold (
         topBar = {
             TopAppBar(
@@ -149,7 +153,12 @@ fun AccountScreen(navController: NavController) {
                         .width(270.dp)
                 ) {
                     Button(
-                        onClick = { /*TODO*/ }) {
+                        onClick = {
+                            appNavController.navigate(AppScreens.StartScreen.route) {
+                                popUpTo(appNavController.graph.findStartDestination().id)
+                                launchSingleTop = true
+                            }
+                                    } ) {
                         Text("Wyloguj")
                     } }
             }
