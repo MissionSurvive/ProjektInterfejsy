@@ -1,3 +1,3 @@
 package com.example.foodapp
 
-data class Foods(val image: ByteArray, val name: String)
+data class Foods(val id: Int, val image: ByteArray, val name: String)

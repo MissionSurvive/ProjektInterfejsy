@@ -5,8 +5,6 @@ import android.content.Context
 import android.database.CursorWindow
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import java.sql.Blob
-
 
 
 class DBHandler
@@ -84,7 +82,98 @@ class DBHandler
         db.close()
     }
 
+    fun getOneFood(id: Int): List<OneFood> {
+        val foodList = mutableListOf<OneFood>()
+        val db = readableDatabase
+        try {
+            // Increase the CursorWindow size using reflection
+            val field = CursorWindow::class.java.getDeclaredField("sCursorWindowSize")
+            field.isAccessible = true
+            field.set(null, 10 * 1024 * 1024) // Set the new size to 100MB
+        } catch (e: Exception) {
+            // Handle the exception
+            e.printStackTrace()
+        }
+        val projection = arrayOf(ID_COL, FOOD_IMAGE, FOOD_NAME, SMALL_PRICE, SMALL_KCAL, SMALL_PORTION, MEDIUM_PRICE, MEDIUM_KCAL, MEDIUM_PORTION, BIG_PRICE, BIG_KCAL, BIG_PORTION, KETCHUP, GARLIC, CATEGORY)
+        val selection = "${ID_COL} = ?"
+        val selectionArgs = arrayOf(id.toString())
+        val cursor = db.query(TABLE_NAME, projection, selection, selectionArgs, null, null, null)
 
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(ID_COL))
+            val image = cursor.getBlob(cursor.getColumnIndexOrThrow(FOOD_IMAGE))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(FOOD_NAME))
+            val sprice = cursor.getInt(cursor.getColumnIndexOrThrow(SMALL_PRICE))
+            val skcal = cursor.getInt(cursor.getColumnIndexOrThrow(SMALL_KCAL))
+            val sportion = cursor.getInt(cursor.getColumnIndexOrThrow(SMALL_PORTION))
+            val mprice = cursor.getInt(cursor.getColumnIndexOrThrow(MEDIUM_PRICE))
+            val mkcal = cursor.getInt(cursor.getColumnIndexOrThrow(MEDIUM_KCAL))
+            val mportion = cursor.getInt(cursor.getColumnIndexOrThrow(MEDIUM_PORTION))
+            val bprice = cursor.getInt(cursor.getColumnIndexOrThrow(BIG_PRICE))
+            val bkcal = cursor.getInt(cursor.getColumnIndexOrThrow(BIG_KCAL))
+            val bportion = cursor.getInt(cursor.getColumnIndexOrThrow(BIG_PORTION))
+            val isKetchup = cursor.getInt(cursor.getColumnIndexOrThrow(KETCHUP))
+            val isGarlic = cursor.getInt(cursor.getColumnIndexOrThrow(GARLIC))
+            val category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY))
+
+            val food = OneFood(id, image, name, sprice, skcal, sportion, mprice, mkcal, mportion, bprice, bkcal, bportion, isKetchup, isGarlic, category)
+            foodList.add(food)
+        }
+        cursor.close()
+        db.close()
+        return foodList
+    }
+
+    fun updateOneFood(
+        id: Int,
+        image: ByteArray?,
+        foodName: String,
+        smallPrice: Int,
+        smallKcal: Int,
+        smallPortion: Int,
+        mediumPrice: Int,
+        mediumKcal: Int,
+        mediumPortion: Int,
+        bigPrice: Int,
+        bigKcal: Int,
+        bigPortion: Int,
+        isKetchup: Int,
+        isGarlicSauce: Int,
+        foodCategory: String): Int
+    {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(ID_COL, id)
+            put(FOOD_IMAGE, image)
+            put(FOOD_NAME, foodName)
+            put(SMALL_PRICE, smallPrice)
+            put(SMALL_KCAL, smallKcal)
+            put(SMALL_PORTION, smallPortion)
+            put(MEDIUM_PRICE, mediumPrice)
+            put(MEDIUM_KCAL, mediumKcal)
+            put(MEDIUM_PORTION, mediumPortion)
+            put(BIG_PRICE, bigPrice)
+            put(BIG_KCAL, bigKcal)
+            put(BIG_PORTION, bigPortion)
+            put(KETCHUP, isKetchup)
+            put(GARLIC, isGarlicSauce)
+            put(CATEGORY, foodCategory)
+        }
+        val selection = "$ID_COL = ?"
+        val selectionArgs = arrayOf(id.toString())
+        val result = db.update(TABLE_NAME, values, selection, selectionArgs)
+        db.close()
+        return result
+    }
+
+    fun deleteOneFood(id: Int): Int {
+        val db = writableDatabase
+        val selection = "$ID_COL = ?"
+        val selectionArgs = arrayOf(id.toString())
+        val deletedRows = db.delete(TABLE_NAME, selection, selectionArgs)
+        db.close()
+        return deletedRows
+    }
 
     fun getAllFoods(category: String): List<Foods> {
         val foodList = mutableListOf<Foods>()
@@ -98,20 +187,17 @@ class DBHandler
             // Handle the exception
             e.printStackTrace()
         }
-        val projection = arrayOf(FOOD_IMAGE, FOOD_NAME)
+        val projection = arrayOf(ID_COL, FOOD_IMAGE, FOOD_NAME)
         val selection = "${CATEGORY} = ?"
         val selectionArgs = arrayOf(category.toString())
         val cursor = db.query(TABLE_NAME, projection, selection, selectionArgs, null, null, null)
 
         while (cursor.moveToNext()) {
+            val foodId = cursor.getInt(cursor.getColumnIndexOrThrow(ID_COL))
             val image = cursor.getBlob(cursor.getColumnIndexOrThrow(FOOD_IMAGE))
             val name = cursor.getString(cursor.getColumnIndexOrThrow(FOOD_NAME))
-            val food = Foods(image, name)
+            val food = Foods(foodId, image, name)
             foodList.add(food)
-
-            for(food in foodList) {
-                println("Food Name: ${food.name}")
-            }
         }
         cursor.close()
         db.close()

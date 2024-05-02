@@ -45,6 +45,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -77,10 +78,10 @@ import java.lang.Exception
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddScreen(context: Context, navController: NavController) {
+fun AddScreen(context: Context, navController: NavController, bottomBarState: MutableState<Boolean>) {
 
     val activity = context as Activity
-
+    bottomBarState.value = true
     var foodName by remember { mutableStateOf("") }
     var smallPrice by remember { mutableStateOf("") }
     var smallKcal by remember { mutableStateOf("") }

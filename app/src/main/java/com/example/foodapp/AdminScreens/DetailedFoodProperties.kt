@@ -2,7 +2,8 @@ package com.example.foodapp.AdminScreens
 
 import android.app.Activity
 import android.content.Context
-import android.net.Uri
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -40,6 +41,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,36 +54,43 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.example.foodapp.AdminPanel
+import com.example.foodapp.BackPressHandler
 import com.example.foodapp.DBHandler
 import com.example.foodapp.booleanToInt
 import com.example.foodapp.convertUriToByteArray
-import java.io.IOException
+import com.example.foodapp.intToBoolean
 import java.lang.Exception
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailedFoodPropertiesScreen(context: Context, navController: NavController) {
+fun DetailedFoodPropertiesScreen(
+    context: Context,
+    navController: NavController,
+    foodId: String,
+    bottomBarState: MutableState<Boolean>
+) {
+    BackPressHandler {
+        bottomBarState.value = true // Make the bottom bar visible
+        navController.navigate(AdminPanel.Home.route) {
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+        }
+    }
     val activity = context as Activity
 
-    var foodName by remember { mutableStateOf("") }
-    var smallPrice by remember { mutableStateOf("") }
-    var smallKcal by remember { mutableStateOf("") }
-    var smallPortion by remember { mutableStateOf("") }
-    var mediumPrice by remember { mutableStateOf("") }
-    var mediumKcal by remember { mutableStateOf("") }
-    var mediumPortion by remember { mutableStateOf("") }
-    var bigPrice by remember { mutableStateOf("") }
-    var bigKcal by remember { mutableStateOf("") }
-    var bigPortion by remember { mutableStateOf("") }
-    var isKetchup by remember { mutableStateOf(false) }
-    var isGarlic by remember { mutableStateOf(false) }
-    var isExpanded by remember { mutableStateOf(false) }
-    var foodCategory by remember { mutableStateOf("Burgery") }
 
-    var selectedImageUri by remember {
-        mutableStateOf<Uri?>(null)
+    var isDatabaseImage by remember { mutableStateOf(true) }
+    var currentImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    fun ByteArray.toBitmap(): Bitmap {
+        return BitmapFactory.decodeByteArray(this, 0, this.size)
+    }
+
+    var selectedImageBitmap by remember {
+        mutableStateOf<Bitmap?>(null)
     }
 
     var selectedImageByteArray by remember {
@@ -91,16 +100,24 @@ fun DetailedFoodPropertiesScreen(context: Context, navController: NavController)
     var photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = {uri ->
-            selectedImageUri = uri
             selectedImageByteArray = uri?.let { convertUriToByteArray(activity, it) }
+            selectedImageBitmap = selectedImageByteArray?.toBitmap()
+            isDatabaseImage = false
         })
+
     val state = rememberScrollState()
     LaunchedEffect(Unit) { state.animateScrollTo(0) }
     Scaffold (
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate(AdminPanel.Home.route) }) {
+                    IconButton(onClick = {
+                        bottomBarState.value = true // Make the bottom bar visible
+                        navController.navigate(AdminPanel.Home.route) {
+                        popUpTo(navController.graph.findStartDestination().id)
+                        launchSingleTop = true
+                    }
+                        }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Go back"
@@ -117,6 +134,23 @@ fun DetailedFoodPropertiesScreen(context: Context, navController: NavController)
         },
         content = {innerPadding ->
             var dbHandler: DBHandler = DBHandler(context)
+            var food = dbHandler.getOneFood(foodId.toInt())
+            val queriedFood = food[0]
+            var foodName by remember { mutableStateOf(queriedFood.name) }
+            var smallPrice by remember { mutableStateOf(queriedFood.sprice.toString()) }
+            var smallKcal by remember { mutableStateOf(queriedFood.skcal.toString()) }
+            var smallPortion by remember { mutableStateOf(queriedFood.sportion.toString()) }
+            var mediumPrice by remember { mutableStateOf(queriedFood.mprice.toString()) }
+            var mediumKcal by remember { mutableStateOf(queriedFood.mkcal.toString()) }
+            var mediumPortion by remember { mutableStateOf(queriedFood.mportion.toString()) }
+            var bigPrice by remember { mutableStateOf(queriedFood.bprice.toString()) }
+            var bigKcal by remember { mutableStateOf(queriedFood.bkcal.toString()) }
+            var bigPortion by remember { mutableStateOf(queriedFood.bportion.toString()) }
+            var isKetchup by remember { mutableStateOf(intToBoolean(queriedFood.isKetchup)) }
+            var isGarlic by remember { mutableStateOf(intToBoolean(queriedFood.isGarlic)) }
+            var isExpanded by remember { mutableStateOf(false) }
+            var foodCategory by remember { mutableStateOf(queriedFood.category) }
+
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -134,7 +168,7 @@ fun DetailedFoodPropertiesScreen(context: Context, navController: NavController)
                         modifier = Modifier
                             .size(270.dp)
                             .clip(RoundedCornerShape(16.dp)),
-                        model = selectedImageUri,
+                        model = if (isDatabaseImage) queriedFood?.image?.toBitmap() else selectedImageBitmap,
                         contentDescription = "",
                         contentScale = ContentScale.Crop
                     )
@@ -611,7 +645,34 @@ fun DetailedFoodPropertiesScreen(context: Context, navController: NavController)
                 ) {
                     Button(
                         onClick = {
-                            /*TODO*/
+                            try {
+                                if(selectedImageByteArray == null || foodName.isEmpty() || smallPrice.isEmpty() || smallKcal.isEmpty() || smallPortion.isEmpty() || mediumPrice.isEmpty() || mediumKcal.isEmpty() || mediumPortion.isEmpty() || bigPrice.isEmpty() || bigKcal.isEmpty() || bigPortion.isEmpty() || foodCategory.isEmpty()) {
+                                    Toast.makeText(context, "Uzupełnij brakujące dane!", Toast.LENGTH_SHORT).show()
+                                }
+                                else {
+                                    dbHandler.updateOneFood(
+                                        id = foodId.toInt(),
+                                        image = selectedImageByteArray,
+                                        foodName = foodName,
+                                        smallPrice = smallPrice.toInt(),
+                                        smallKcal = smallKcal.toInt(),
+                                        smallPortion = smallPortion.toInt(),
+                                        mediumPrice = mediumPrice.toInt(),
+                                        mediumKcal = mediumKcal.toInt(),
+                                        mediumPortion = mediumPortion.toInt(),
+                                        bigPrice = bigPrice.toInt(),
+                                        bigKcal = bigKcal.toInt(),
+                                        bigPortion = bigPortion.toInt(),
+                                        isKetchup = booleanToInt(isKetchup),
+                                        isGarlicSauce = booleanToInt(isGarlic),
+                                        foodCategory = foodCategory
+                                    )
+                                    Toast.makeText(context, "Edytowano danie pomyślnie!", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            catch (e: Exception) {
+                                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
+                            }
                         }) {
                         Text("Edytuj danie")
                     }
@@ -629,6 +690,15 @@ fun DetailedFoodPropertiesScreen(context: Context, navController: NavController)
                     Button(
                         onClick = {
                             /*TODO*/
+                            /*
+                            try{
+                                dbHandler.deleteOneFood(foodId.toInt())
+                                Toast.makeText(context, "Usunięto danie pomyślnie!", Toast.LENGTH_SHORT).show()
+                            }
+                            catch (e: Exception) {
+                                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
+                            }*/
+
                         }) {
                         Text("Usuń danie")
                     }
