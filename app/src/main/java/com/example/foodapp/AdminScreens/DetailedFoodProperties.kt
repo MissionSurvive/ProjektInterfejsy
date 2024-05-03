@@ -703,7 +703,7 @@ fun DetailedFoodPropertiesScreen(
                 }
                 Surface(
                     modifier = Modifier
-                        .height(100.dp)
+                        .height(10.dp)
                         .fillMaxWidth()
                 ) {}
             }

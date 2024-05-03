@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,6 +28,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,207 +38,245 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.foodapp.AdminScreens.DetailedFoodPropertiesScreen
 import com.example.foodapp.DBHandler
 import com.example.foodapp.Foods
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuScreen(context: Context) {
+fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
+    val menuNavController = rememberNavController()
+    NavHost(
+        navController = menuNavController,
+        startDestination = "Menu"
+    ) {
+        composable("Menu") {
+            bottomBarState.value = true
+            // Smoothly scroll 100px on first composition
+            val state = rememberScrollState()
+            LaunchedEffect(Unit) { state.animateScrollTo(0) }
+            Scaffold (
+                topBar = {
+                    Column {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Text(text = "FoodDroid")
+                            },
+                            colors = TopAppBarDefaults.smallTopAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                            ))
+                        /*SearchBar(
+                            modifier = if(active) {
+                                Modifier
+                                    .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
+                            } else {
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding()
+                                    .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
+                            },
+                            query = text,
+                            onQueryChange = { text = it },
+                            onSearch = {
+                                items.add(text)
+                                active = false
+                                text = "" },
+                            active = active,
+                            onActiveChange = { active = it },
+                            placeholder = {
+                                Text(text="Wyszukaj")
+                            },
+                            leadingIcon = {
+                                Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
+                            },
+                            trailingIcon = {
+                                if(active) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .clickable {
+                                                if(text.isNotEmpty()) {
+                                                    text = ""
+                                                }
+                                                else {
+                                                    active = false
+                                                }
+                                            },
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Close icon")
+                                }
+                            },
 
-    // Smoothly scroll 100px on first composition
-    val state = rememberScrollState()
-    var text by remember { mutableStateOf("") }
-    var active by remember { mutableStateOf(false) }
-    var items = remember { mutableStateListOf("<sample_search>") }
-    LaunchedEffect(Unit) { state.animateScrollTo(0) }
-    Scaffold (
-        topBar = {
-            Column {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(text = "FoodDroid")
-                    },
-                    colors = TopAppBarDefaults.smallTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-                    ))
-                /*SearchBar(
-                    modifier = if(active) {
-                        Modifier
-                            .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
-                    } else {
-                        Modifier
-                            .fillMaxWidth()
-                            .padding()
-                            .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
-                    },
-                    query = text,
-                    onQueryChange = { text = it },
-                    onSearch = {
-                        items.add(text)
-                        active = false
-                        text = "" },
-                    active = active,
-                    onActiveChange = { active = it },
-                    placeholder = {
-                        Text(text="Wyszukaj")
-                    },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon")
-                    },
-                    trailingIcon = {
-                        if(active) {
-                            Icon(
-                                modifier = Modifier
-                                    .clickable {
-                                        if(text.isNotEmpty()) {
-                                            text = ""
-                                        }
-                                        else {
-                                            active = false
-                                        }
-                                    },
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Close icon")
-                        }
-                    },
-
-                    windowInsets = if (active) {
-                        SearchBarDefaults.windowInsets
-                    } else {
-                        WindowInsets(0.dp)
-                    }) {
-                    items.forEach {
-                        Row(modifier = Modifier.padding(all = 14.dp)) {
-                            Icon(
-                                modifier = Modifier.padding(end = 10.dp),
-                                imageVector = Icons.Outlined.History,
-                                contentDescription = "History icon")
-                            Text(text = it)
-                        }
+                            windowInsets = if (active) {
+                                SearchBarDefaults.windowInsets
+                            } else {
+                                WindowInsets(0.dp)
+                            }) {
+                            items.forEach {
+                                Row(modifier = Modifier.padding(all = 14.dp)) {
+                                    Icon(
+                                        modifier = Modifier.padding(end = 10.dp),
+                                        imageVector = Icons.Outlined.History,
+                                        contentDescription = "History icon")
+                                    Text(text = it)
+                                }
+                            }
+                        }*/
                     }
-                }*/
+                },
+                content = { innerPadding ->
+                    var dbHandler: DBHandler = DBHandler(context)
+                    val foodsBurgers = dbHandler.getAllFoods("Burgery")
+                    val foodsDesserts = dbHandler.getAllFoods("Desery")
+                    val foodsSides = dbHandler.getAllFoods("Dodatki")
+                    val foodsChicken = dbHandler.getAllFoods("Kurczaki")
+                    val foodsDrinks = dbHandler.getAllFoods("Napoje")
+                    val foodsPizza = dbHandler.getAllFoods("Pizza")
+                    val foodsSalads = dbHandler.getAllFoods("Sałatki")
+                    val foodsWraps = dbHandler.getAllFoods("Wrapy")
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .verticalScroll(state),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Burgery",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsBurgers) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Desery",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsDesserts) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Dodatki",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsSides) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Kurczaki",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsChicken) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Napoje",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsDrinks) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Pizza",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsPizza) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Sałatki",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsSalads) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Column(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                text = "Wrapy",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        FoodCardRow(foods = foodsWraps) { food ->
+                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                        }
+                        Surface(
+                            modifier = Modifier
+                                .height(100.dp)
+                                .fillMaxWidth()
+                        ) {}
+                    }
+                })
+        }
+        composable("DetailedFoodOrder/{foodId}") { backStackEntry ->
+            bottomBarState.value = false
+            val foodId = backStackEntry.arguments?.getString("foodId")
+            if(foodId != null) {
+                DetailedFoodOrderScreen(
+                    context = LocalContext.current,
+                    foodId = foodId,
+                    navController = menuNavController,
+                    bottomBarState = bottomBarState
+                )
             }
-        },
-        content = { innerPadding ->
-            var dbHandler: DBHandler = DBHandler(context)
-            val foodsBurgers = dbHandler.getAllFoods("Burgery")
-            val foodsDesserts = dbHandler.getAllFoods("Desery")
-            val foodsSides = dbHandler.getAllFoods("Dodatki")
-            val foodsChicken = dbHandler.getAllFoods("Kurczaki")
-            val foodsDrinks = dbHandler.getAllFoods("Napoje")
-            val foodsPizza = dbHandler.getAllFoods("Pizza")
-            val foodsSalads = dbHandler.getAllFoods("Sałatki")
-            val foodsWraps = dbHandler.getAllFoods("Wrapy")
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .verticalScroll(state),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Burgery",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsBurgers)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Desery",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsDesserts)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Dodatki",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsSides)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Kurczaki",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsChicken)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Napoje",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsDrinks)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Pizza",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsPizza)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Sałatki",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsSalads)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Wrapy",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                }
-                FoodCardRow(foods = foodsWraps)
-                Surface(
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
-                ) {}
-            }
-        })
+        }
+    }
 }
 
 data class CardInfo(
@@ -245,7 +285,7 @@ data class CardInfo(
 )
 
 @Composable
-fun FoodCardRow(foods: List<Foods>) {
+fun FoodCardRow(foods: List<Foods>, onClick: (Foods) -> Unit) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -255,7 +295,8 @@ fun FoodCardRow(foods: List<Foods>) {
         itemsIndexed(foods) { index, food ->
             FoodCard(
                 image = BitmapFactory.decodeByteArray(food.image, 0, food.image.size),
-                name = food.name
+                name = food.name,
+                onClick = { onClick(food) }
             )
         }
     }
@@ -264,7 +305,8 @@ fun FoodCardRow(foods: List<Foods>) {
 @Composable
 fun FoodCard(
     image: Bitmap,
-    name: String
+    name: String,
+    onClick: () -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -272,6 +314,7 @@ fun FoodCard(
         ),
         modifier = Modifier
             .size(width = 150.dp, height = 150.dp)
+            .clickable (onClick = onClick)
     ) {
         Image(
             bitmap = image.asImageBitmap(),

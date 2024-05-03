@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -44,7 +45,8 @@ import com.example.foodapp.Foods
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(context: Context, navController: NavController) {
+fun CartScreen(context: Context, navController: NavController, bottomBarState: MutableState<Boolean>) {
+    bottomBarState.value = true
     Scaffold (
         topBar = {
             TopAppBar(

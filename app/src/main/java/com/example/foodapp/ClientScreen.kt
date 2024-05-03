@@ -11,7 +11,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -24,15 +27,24 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun ClientScreen(navController: NavHostController) {
     val clientNavController = rememberNavController()
+    val bottomBarState = rememberSaveable { mutableStateOf(true) }
+
+    val currentBackStackEntry by clientNavController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStackEntry?.destination
+
+    if (currentDestination?.route == ClientPanel.Menu.route) {
+        bottomBarState.value = true // Make the bottom bar visible
+    }
+
     Scaffold(
-        bottomBar = { ClientBottomBar(navController = clientNavController)}
+        bottomBar = { ClientBottomBar(navController = clientNavController, bottomBarState = bottomBarState)}
     ) {
-        ClientBottomNavGraph(navController = clientNavController, appNavController = navController)
+        ClientBottomNavGraph(navController = clientNavController, appNavController = navController, bottomBarState = bottomBarState)
     }
 }
 
 @Composable
-fun ClientBottomBar(navController: NavHostController) {
+fun ClientBottomBar(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
     BackPressHandler {
 
     }
@@ -64,26 +76,28 @@ fun ClientBottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    NavigationBar {
-        screens.forEachIndexed { index, screen ->
-            NavigationBarItem(
-                icon = { Icon(
-                    imageVector = screen.icon,
-                    contentDescription = "Navigation Icon"
-                ) },
-                label = { Text(text = screen.title) },
-                selected = currentDestination?.hierarchy?.any {
-                    it.route == screen.route
-                } == true,
-                //unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
-                onClick = {
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id)
-                        launchSingleTop = true
-
+    if(bottomBarState.value) {
+        NavigationBar {
+            screens.forEachIndexed { index, screen ->
+                NavigationBarItem(
+                    icon = { Icon(
+                        imageVector = screen.icon,
+                        contentDescription = "Navigation Icon"
+                    ) },
+                    label = { Text(text = screen.title) },
+                    selected = currentDestination?.hierarchy?.any {
+                        it.route == screen.route
+                    } == true,
+                    //unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
+                    onClick = {
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id)
+                            launchSingleTop = true
+                            bottomBarState.value = true
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

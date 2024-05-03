@@ -66,6 +66,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.foodapp.AdminPanel
 import com.example.foodapp.BackPressHandler
+import com.example.foodapp.ClientPanel
 import com.example.foodapp.DBHandler
 import com.example.foodapp.booleanToInt
 import com.example.foodapp.convertUriToByteArray
@@ -78,9 +79,14 @@ fun DetailedFoodOrderScreen(
     context: Context,
     navController: NavController,
     foodId: String,
+    bottomBarState: MutableState<Boolean>
 ) {
     BackPressHandler {
-
+        bottomBarState.value = true // Make the bottom bar visible
+        navController.navigate(ClientPanel.Menu.route) {
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+        }
     }
     val activity = context as Activity
 
@@ -118,7 +124,11 @@ fun DetailedFoodOrderScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = {
-
+                        bottomBarState.value = true // Make the bottom bar visible
+                        navController.navigate(ClientPanel.Menu.route) {
+                            popUpTo(navController.graph.findStartDestination().id)
+                            launchSingleTop = true
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
