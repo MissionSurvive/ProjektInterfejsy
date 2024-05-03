@@ -81,9 +81,7 @@ fun DetailedFoodPropertiesScreen(
     }
     val activity = context as Activity
 
-
     var isDatabaseImage by remember { mutableStateOf(true) }
-    var currentImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     fun ByteArray.toBitmap(): Bitmap {
         return BitmapFactory.decodeByteArray(this, 0, this.size)
