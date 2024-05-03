@@ -33,6 +33,18 @@ class DBHandler
                 + CATEGORY + " TEXT)")
         // at last we are calling a exec sql method to execute above sql query
         db.execSQL(query)
+
+        val query2 = ("CREATE TABLE " + CART_TABLE_NAME + " ("
+                + CART_ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + CART_PRICE + " INTEGER,"
+                + CART_QUANTITY + " INTEGER,"
+                + CART_SIZE + " TEXT,"
+                + CART_KETCHUP + " INTEGER,"
+                + CART_GARLIC + " INTEGER,"
+                + FOOD_ID + " INTEGER,"
+                + "FOREIGN KEY (" + FOOD_ID + ") REFERENCES " + TABLE_NAME + "(" + ID_COL + ")"
+                + ")")
+        db.execSQL(query2)
     }
     // this method is use to add new course to our sqlite database.
     fun addNewFood(
@@ -251,5 +263,21 @@ class DBHandler
         private const val GARLIC = "GARLIC"
 
         private const val CATEGORY = "CATEGORY"
+
+        private const val CART_TABLE_NAME = "CART"
+
+        private const val CART_ID_COL = "ID"
+
+        private const val CART_PRICE = "TOTAL"
+
+        private const val CART_QUANTITY = "FQUANTITY"
+
+        private const val CART_SIZE = "FSIZE"
+
+        private const val CART_KETCHUP = "KETCHUP"
+
+        private const val CART_GARLIC = "GARLIC"
+
+        private const val FOOD_ID = "FID"
     }
 }
