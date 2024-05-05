@@ -16,10 +16,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -30,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.foodapp.AdminScreens.DetailedFoodPropertiesScreen
 import com.example.foodapp.DBHandler
 import com.example.foodapp.Foods
 
@@ -138,130 +141,189 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                     val foodsPizza = dbHandler.getAllFoods("Pizza")
                     val foodsSalads = dbHandler.getAllFoods("Sałatki")
                     val foodsWraps = dbHandler.getAllFoods("Wrapy")
+                    var burgerSelected by remember { mutableStateOf(true) }
+                    var dessertSelected by remember { mutableStateOf(true) }
+                    var sideSelected by remember { mutableStateOf(true) }
+                    var chickenSelected by remember { mutableStateOf(true) }
+                    var drinksSelected by remember { mutableStateOf(true) }
+                    var pizzaSelected by remember { mutableStateOf(true) }
+                    var saladsSelected by remember { mutableStateOf(true) }
+                    var wrapsSelected by remember { mutableStateOf(true) }
+                    val filterChips = listOf("Burgery", "Desery", "Dodatki", "Kurczaki", "Napoje", "Pizza", "Sałatki", "Wrapy")
+                    var selectedIndices by remember { mutableStateOf(mutableSetOf<Int>()) }
                     Column(
                         modifier = Modifier
                             .padding(innerPadding)
                             .verticalScroll(state),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Burgery",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
+                        FilterChipGroup(
+                            filterChips = filterChips,
+                            selectedIndices = selectedIndices,
+                            onFilterChipClicked = { index ->
+                                    if (index in selectedIndices) {
+                                        selectedIndices =
+                                            (selectedIndices - index) as MutableSet<Int>
+                                        when (index) {
+                                            0 -> burgerSelected = false
+                                            1 -> dessertSelected = false
+                                            2 -> sideSelected = false
+                                            3 -> chickenSelected = false
+                                            4 -> drinksSelected = false
+                                            5 -> pizzaSelected = false
+                                            6 -> saladsSelected = false
+                                            7 -> wrapsSelected = false
+                                        }
+                                    } else {
+                                        selectedIndices =
+                                            (selectedIndices + index) as MutableSet<Int>
+                                        when (index) {
+                                            0 -> burgerSelected = true
+                                            1 -> dessertSelected = true
+                                            2 -> sideSelected = true
+                                            3 -> chickenSelected = true
+                                            4 -> drinksSelected = true
+                                            5 -> pizzaSelected = true
+                                            6 -> saladsSelected = true
+                                            7 -> wrapsSelected = true
+                                        }
+                                    }
+                            }
+                        )
+                            if(burgerSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Burgery",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsBurgers) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            if(dessertSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Desery",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsDesserts) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            if(sideSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Dodatki",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsSides) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            if(chickenSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Kurczaki",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsChicken) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            if(drinksSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Napoje",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsDrinks) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            if(pizzaSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Pizza",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsPizza) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            if(saladsSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Sałatki",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsSalads) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            if(wrapsSelected) {
+                                Column(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                                ) {
+                                    Text(
+                                        text = "Wrapy",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                    )
+                                }
+                                FoodCardRow(foods = foodsWraps) { food ->
+                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                }
+                            }
+                            Surface(
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .fillMaxWidth()
+                            ) {}
                         }
-                        FoodCardRow(foods = foodsBurgers) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Desery",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-                        FoodCardRow(foods = foodsDesserts) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Dodatki",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-                        FoodCardRow(foods = foodsSides) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Kurczaki",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-                        FoodCardRow(foods = foodsChicken) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Napoje",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-                        FoodCardRow(foods = foodsDrinks) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Pizza",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-                        FoodCardRow(foods = foodsPizza) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Sałatki",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-                        FoodCardRow(foods = foodsSalads) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Column(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "Wrapy",
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-                        FoodCardRow(foods = foodsWraps) { food ->
-                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
-                        }
-                        Surface(
-                            modifier = Modifier
-                                .height(100.dp)
-                                .fillMaxWidth()
-                        ) {}
-                    }
                 })
         }
         composable("DetailedFoodOrder/{foodId}") { backStackEntry ->
@@ -314,7 +376,7 @@ fun FoodCard(
         ),
         modifier = Modifier
             .size(width = 150.dp, height = 150.dp)
-            .clickable (onClick = onClick)
+            .clickable(onClick = onClick)
     ) {
         Image(
             bitmap = image.asImageBitmap(),
@@ -328,5 +390,48 @@ fun FoodCard(
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 5.dp)
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterChipItem(
+    label: String,
+    isSelected: Boolean,
+    onFilterChipClicked: () -> Unit
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = onFilterChipClicked,
+        label = { Text(label) },
+        leadingIcon = {
+            if (isSelected) {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = "Selected",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+            }
+        }
+    )
+}
+@Composable
+fun FilterChipGroup(
+    filterChips: List<String>,
+    selectedIndices: Set<Int>,
+    onFilterChipClicked: (Int) -> Unit
+) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(filterChips.size) { index ->
+            FilterChipItem(
+                label = filterChips[index],
+                isSelected = index in selectedIndices,
+                onFilterChipClicked = { onFilterChipClicked(index) }
+            )
+        }
     }
 }
