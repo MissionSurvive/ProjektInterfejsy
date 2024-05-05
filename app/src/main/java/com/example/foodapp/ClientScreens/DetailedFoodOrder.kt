@@ -160,8 +160,6 @@ fun DetailedFoodOrderScreen(
             var bigPortion by remember { mutableStateOf(queriedFood.bportion.toString()) }
             var isKetchup by remember { mutableStateOf(intToBoolean(queriedFood.isKetchup)) }
             var isGarlic by remember { mutableStateOf(intToBoolean(queriedFood.isGarlic)) }
-            var isExpanded by remember { mutableStateOf(false) }
-            var foodCategory by remember { mutableStateOf(queriedFood.category) }
             var price by remember { mutableStateOf(smallPrice) }
             var kcal by remember { mutableStateOf(smallKcal) }
             var portion by remember { mutableStateOf(smallPortion) }
@@ -403,7 +401,21 @@ fun DetailedFoodOrderScreen(
                 ) {
                     Button(
                         onClick = {
-                            /*TODO*/
+                            try {
+                                dbHandler.addToCart(
+                                    cartPrice = price.toInt() * quantity,
+                                    cartQuantity = quantity,
+                                    cartSize = selectedOption,
+                                    isKetchup = booleanToInt(ketchupState),
+                                    isGarlicSauce = booleanToInt(garlicStete),
+                                    foodId = foodId.toInt()
+                                    )
+                                Toast.makeText(context, "Dodano do koszyka!", Toast.LENGTH_SHORT).show()
+
+                            }
+                            catch (e: Exception) {
+                                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
+                            }
                         }) {
                         Text("Dodaj do koszyka")
                     }

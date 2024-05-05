@@ -3,12 +3,14 @@ package com.example.foodapp.ClientScreens
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,6 +41,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.foodapp.Cart
 import com.example.foodapp.ClientPanel
 import com.example.foodapp.DBHandler
 import com.example.foodapp.Foods
@@ -68,67 +71,71 @@ fun CartScreen(context: Context, navController: NavController, bottomBarState: M
         },
         content = {innerPadding ->
             var dbHandler: DBHandler = DBHandler(context)
-            val foodsBurgers = dbHandler.getAllFoods("Burgery")
-            val foodsDesserts = dbHandler.getAllFoods("Desery")
-            val foodsSides = dbHandler.getAllFoods("Dodatki")
-            val foodsChicken = dbHandler.getAllFoods("Kurczaki")
-            val foodsDrinks = dbHandler.getAllFoods("Napoje")
-            val foodsPizza = dbHandler.getAllFoods("Pizza")
-            val foodsSalads = dbHandler.getAllFoods("Sałatki")
-            val foodsWraps = dbHandler.getAllFoods("Wrapy")
+            var total = dbHandler.getCartTotalPrice()
             Column(
                 modifier = Modifier.padding(innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                FoodCardColumn(foods = foodsSides)
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    Text(
-                        text = "Do zapłaty:",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
+                if(total > 0) {
+                    FoodCardColumn(dbHandler.getCartContents())
+                    Column(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 10.dp)
+                    ) {
+                        Text(
+                            text = "Do zapłaty: " + total.toString() + " zł",
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        )
+                    }
+                    Surface(
+                        modifier = Modifier
+                            .height(60.dp)
+                            .width(270.dp)
+                    ) {
+                        Button(
+                            onClick = { dbHandler.clearCart()
+                                Toast.makeText(context, "Wyczyszczono koszyk!", Toast.LENGTH_SHORT).show()
+                                navController.navigate(ClientPanel.Cart.route)
+                            }) {
+                            Text("Wyczyść koszyk")
+                        } }
                 }
-                Column(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp)
-                ) {
-                    Text(
-                        text = "<total_price>",
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
+                else {
+                    Column(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Koszyk jest pusty!",
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        )
+                    }
                 }
-                Surface(
-                    modifier = Modifier
-                        .height(60.dp)
-                        .width(270.dp)
-                ) {
-                    Button(
-                        onClick = { /*TODO*/ }) {
-                        Text("Wyczyść koszyk")
-                    } }
             }
         }
     )
 }
 
 @Composable
-fun FoodCardColumn(foods: List<Foods>) {
+fun FoodCardColumn(content: List<Cart>) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         //userScrollEnabled = true
     ) {
-        itemsIndexed(foods) { index, food ->
+        itemsIndexed(content) { index, content ->
             CartFoodCard(
-                image = BitmapFactory.decodeByteArray(food.image, 0, food.image.size),
-                name = food.name
+                image = BitmapFactory.decodeByteArray(content.image, 0, content.image.size),
+                name = content.name,
+                quantity = content.quantity,
+                size = content.size,
+                price = content.price
             )
         }
     }
@@ -137,7 +144,10 @@ fun FoodCardColumn(foods: List<Foods>) {
 @Composable
 fun CartFoodCard(
     image: Bitmap,
-    name: String
+    name: String,
+    quantity: Int,
+    size: String,
+    price: Int
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -158,13 +168,13 @@ fun CartFoodCard(
                     horizontalAlignment = Alignment.Start
                 ){
                     Text(
-                        text = name,
+                        text = name + " (" + size + "), " + quantity.toString() + "x",
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "<price>",
+                        text = price.toString() + " zł",
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize
                     )
                 }

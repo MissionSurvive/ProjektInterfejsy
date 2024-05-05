@@ -46,6 +46,93 @@ class DBHandler
                 + ")")
         db.execSQL(query2)
     }
+
+    fun addToCart(
+        cartPrice: Int,
+        cartQuantity: Int,
+        cartSize: String,
+        isKetchup: Int,
+        isGarlicSauce: Int,
+        foodId: Int
+    ) {
+        val db = this.writableDatabase
+        val values = ContentValues()
+
+        values.put(CART_PRICE, cartPrice)
+        values.put(CART_QUANTITY, cartQuantity)
+        values.put(CART_SIZE, cartSize)
+        values.put(CART_KETCHUP, isKetchup)
+        values.put(CART_GARLIC, isGarlicSauce)
+        values.put(FOOD_ID, foodId)
+
+        db.insert(CART_TABLE_NAME, null, values)
+        db.close()
+    }
+
+    fun getCartContents(): List<Cart> {
+        val cartList = mutableListOf<Cart>()
+        val db = readableDatabase
+        try {
+            // Increase the CursorWindow size using reflection
+            val field = CursorWindow::class.java.getDeclaredField("sCursorWindowSize")
+            field.isAccessible = true
+            field.set(null, 10 * 1024 * 1024) // Set the new size to 100MB
+        } catch (e: Exception) {
+            // Handle the exception
+            e.printStackTrace()
+        }
+        val query = "SELECT c.*, f.$FOOD_IMAGE, f.$FOOD_NAME " +
+                "FROM $CART_TABLE_NAME c " +
+                "JOIN $TABLE_NAME f ON c.$FOOD_ID = f.$ID_COL"
+
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val price = cursor.getInt(cursor.getColumnIndexOrThrow(CART_PRICE))
+            val quantity = cursor.getInt(cursor.getColumnIndexOrThrow(CART_QUANTITY))
+            val size = cursor.getString(cursor.getColumnIndexOrThrow(CART_SIZE))
+            val isKetchup = cursor.getInt(cursor.getColumnIndexOrThrow(CART_KETCHUP))
+            val isGarlic = cursor.getInt(cursor.getColumnIndexOrThrow(CART_GARLIC))
+            val foodId = cursor.getInt(cursor.getColumnIndexOrThrow(FOOD_ID))
+            val image = cursor.getBlob((cursor.getColumnIndexOrThrow(FOOD_IMAGE)))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(FOOD_NAME))
+            val content = Cart(price, quantity, size, isKetchup, isGarlic, foodId, image, name)
+            cartList.add(content)
+        }
+        cursor.close()
+        db.close()
+        return cartList
+    }
+
+    fun getCartTotalPrice(): Int {
+        var totalPrice = 0
+        val db = readableDatabase
+        try {
+            // Increase the CursorWindow size using reflection
+            val field = CursorWindow::class.java.getDeclaredField("sCursorWindowSize")
+            field.isAccessible = true
+            field.set(null, 10 * 1024 * 1024) // Set the new size to 100MB
+        } catch (e: Exception) {
+            // Handle the exception
+            e.printStackTrace()
+        }
+        val projection = arrayOf(CART_PRICE)
+        val cursor = db.query(CART_TABLE_NAME, projection, null, null, null, null, null)
+
+        while (cursor.moveToNext()) {
+            totalPrice += cursor.getInt(cursor.getColumnIndexOrThrow(CART_PRICE))
+        }
+        cursor.close()
+        db.close()
+        return totalPrice
+    }
+
+    fun clearCart() {
+        val db = writableDatabase
+        db.delete(CART_TABLE_NAME, null, null)
+        db.close()
+    }
+
     // this method is use to add new course to our sqlite database.
     fun addNewFood(
         image: ByteArray?,
