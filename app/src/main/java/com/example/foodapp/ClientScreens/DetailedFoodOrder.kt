@@ -411,7 +411,10 @@ fun DetailedFoodOrderScreen(
                                     foodId = foodId.toInt()
                                     )
                                 Toast.makeText(context, "Dodano do koszyka!", Toast.LENGTH_SHORT).show()
-
+                                navController.navigate(ClientPanel.Menu.route) {
+                                    popUpTo(navController.graph.findStartDestination().id)
+                                    launchSingleTop = true
+                                }
                             }
                             catch (e: Exception) {
                                 Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()

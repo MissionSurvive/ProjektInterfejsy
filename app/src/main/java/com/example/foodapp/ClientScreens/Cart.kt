@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -34,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +53,8 @@ import com.example.foodapp.Foods
 @Composable
 fun CartScreen(context: Context, navController: NavController, bottomBarState: MutableState<Boolean>) {
     bottomBarState.value = true
+    val state = rememberScrollState()
+    LaunchedEffect(Unit) { state.animateScrollTo(0) }
     Scaffold (
         topBar = {
             TopAppBar(
@@ -71,13 +76,31 @@ fun CartScreen(context: Context, navController: NavController, bottomBarState: M
         },
         content = {innerPadding ->
             var dbHandler: DBHandler = DBHandler(context)
+            var cartContents = dbHandler.getCartContents()
             var total = dbHandler.getCartTotalPrice()
             Column(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(state),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if(total > 0) {
-                    FoodCardColumn(dbHandler.getCartContents())
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        cartContents.forEach { content ->
+                            CartFoodCard(
+                                image = BitmapFactory.decodeByteArray(content.image, 0, content.image.size),
+                                name = content.name,
+                                quantity = content.quantity,
+                                size = content.size,
+                                price = content.price
+                            )
+                        }
+                    }
                     Column(
                         modifier = Modifier
                             .height(50.dp)
@@ -89,19 +112,24 @@ fun CartScreen(context: Context, navController: NavController, bottomBarState: M
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                     }
-                    Surface(
-                        modifier = Modifier
-                            .height(60.dp)
-                            .width(270.dp)
-                    ) {
-                        Button(
-                            onClick = { dbHandler.clearCart()
-                                Toast.makeText(context, "Wyczyszczono koszyk!", Toast.LENGTH_SHORT).show()
-                                navController.navigate(ClientPanel.Cart.route)
-                            }) {
-                            Text("Wyczyść koszyk")
-                        } }
-                }
+                        Surface(
+                            modifier = Modifier
+                                .height(60.dp)
+                                .width(270.dp)
+                        ) {
+                            Button(
+                                onClick = { dbHandler.clearCart()
+                                    Toast.makeText(context, "Wyczyszczono koszyk!", Toast.LENGTH_SHORT).show()
+                                    navController.navigate(ClientPanel.Cart.route)
+                                }) {
+                                Text("Wyczyść koszyk")
+                            } }
+                        Surface(
+                            modifier = Modifier
+                                .height(100.dp)
+                                .fillMaxWidth()
+                        ) {}
+                    }
                 else {
                     Column(
                         modifier = Modifier
@@ -119,26 +147,6 @@ fun CartScreen(context: Context, navController: NavController, bottomBarState: M
             }
         }
     )
-}
-
-@Composable
-fun FoodCardColumn(content: List<Cart>) {
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        //userScrollEnabled = true
-    ) {
-        itemsIndexed(content) { index, content ->
-            CartFoodCard(
-                image = BitmapFactory.decodeByteArray(content.image, 0, content.image.size),
-                name = content.name,
-                quantity = content.quantity,
-                size = content.size,
-                price = content.price
-            )
-        }
-    }
 }
 
 @Composable
@@ -168,13 +176,13 @@ fun CartFoodCard(
                     horizontalAlignment = Alignment.Start
                 ){
                     Text(
-                        text = name + " (" + size + "), " + quantity.toString() + "x",
+                        text = name,
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = price.toString() + " zł",
+                        text = size + ", " + quantity.toString() + "x, " + price.toString() + " zł",
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize
                     )
                 }

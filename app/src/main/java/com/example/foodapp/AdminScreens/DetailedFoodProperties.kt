@@ -680,6 +680,7 @@ fun DetailedFoodPropertiesScreen(
                         .height(10.dp)
                         .fillMaxWidth()
                 ) {}
+                /*TODO When going back, home doesn't refresh and app crashes with IndexOutOfBounds
                 Surface(
                     modifier = Modifier
                         .height(60.dp)
@@ -687,20 +688,20 @@ fun DetailedFoodPropertiesScreen(
                 ) {
                     Button(
                         onClick = {
-                            /*TODO*/
-                            /*
+
+
                             try{
                                 dbHandler.deleteOneFood(foodId.toInt())
                                 Toast.makeText(context, "Usunięto danie pomyślnie!", Toast.LENGTH_SHORT).show()
                             }
                             catch (e: Exception) {
                                 Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
-                            }*/
+                            }
 
                         }) {
                         Text("Usuń danie")
                     }
-                }
+                }*/
                 Surface(
                     modifier = Modifier
                         .height(10.dp)
