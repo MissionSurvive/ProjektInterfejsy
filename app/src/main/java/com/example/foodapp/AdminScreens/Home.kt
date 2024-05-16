@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.foodapp.DBHandler
-import com.example.foodapp.Foods
+import com.example.foodapp.Database.DBHandler
+import com.example.foodapp.Database.Foods
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

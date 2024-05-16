@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.Database
 
 import android.content.ContentValues
 import android.content.Context
@@ -194,7 +194,7 @@ class DBHandler
             e.printStackTrace()
         }
         val projection = arrayOf(ID_COL, FOOD_IMAGE, FOOD_NAME, SMALL_PRICE, SMALL_KCAL, SMALL_PORTION, MEDIUM_PRICE, MEDIUM_KCAL, MEDIUM_PORTION, BIG_PRICE, BIG_KCAL, BIG_PORTION, KETCHUP, GARLIC, CATEGORY)
-        val selection = "${ID_COL} = ?"
+        val selection = "$ID_COL = ?"
         val selectionArgs = arrayOf(id.toString())
         val cursor = db.query(TABLE_NAME, projection, selection, selectionArgs, null, null, null)
 
@@ -287,7 +287,7 @@ class DBHandler
             e.printStackTrace()
         }
         val projection = arrayOf(ID_COL, FOOD_IMAGE, FOOD_NAME)
-        val selection = "${CATEGORY} = ?"
+        val selection = "$CATEGORY = ?"
         val selectionArgs = arrayOf(category.toString())
         val cursor = db.query(TABLE_NAME, projection, selection, selectionArgs, null, null, null)
 

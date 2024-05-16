@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.AppScreens
 
 import android.content.Context
 import android.widget.Toast
@@ -40,12 +40,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.foodapp.BackPressHandler
+import com.example.foodapp.Panels.AppPanel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(context: Context, navController: NavController) {
     BackPressHandler {
-        navController.navigate(AppScreens.StartScreen.route)
+        navController.navigate(AppPanel.StartScreen.route)
     }
     val state = rememberScrollState()
     LaunchedEffect(Unit) { state.animateScrollTo(0) }
@@ -53,7 +55,7 @@ fun RegisterScreen(context: Context, navController: NavController) {
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate(AppScreens.StartScreen.route) }) {
+                    IconButton(onClick = { navController.navigate(AppPanel.StartScreen.route) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Go back"

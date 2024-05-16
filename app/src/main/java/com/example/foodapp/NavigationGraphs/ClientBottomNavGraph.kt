@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.NavigationGraphs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.foodapp.AdminScreens.DetailedFoodPropertiesScreen
+import com.example.foodapp.Panels.ClientPanel
 import com.example.foodapp.ClientScreens.CartScreen
 import com.example.foodapp.ClientScreens.ClientAccountScreen
 import com.example.foodapp.ClientScreens.DetailedFoodOrderScreen

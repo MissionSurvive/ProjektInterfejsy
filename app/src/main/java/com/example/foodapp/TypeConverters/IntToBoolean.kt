@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.TypeConverters
 
 fun intToBoolean(value: Int): Boolean {
     return when (value) {

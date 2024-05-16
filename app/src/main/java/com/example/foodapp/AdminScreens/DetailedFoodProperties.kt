@@ -56,12 +56,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
-import com.example.foodapp.AdminPanel
+import com.example.foodapp.Panels.AdminPanel
 import com.example.foodapp.BackPressHandler
-import com.example.foodapp.DBHandler
-import com.example.foodapp.booleanToInt
-import com.example.foodapp.convertUriToByteArray
-import com.example.foodapp.intToBoolean
+import com.example.foodapp.Database.DBHandler
+import com.example.foodapp.TypeConverters.booleanToInt
+import com.example.foodapp.TypeConverters.convertUriToByteArray
+import com.example.foodapp.TypeConverters.intToBoolean
 import java.lang.Exception
 
 @OptIn(ExperimentalMaterial3Api::class)

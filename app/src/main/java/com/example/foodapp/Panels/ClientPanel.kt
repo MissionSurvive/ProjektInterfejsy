@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.Panels
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

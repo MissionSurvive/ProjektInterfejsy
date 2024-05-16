@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.AppScreens
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -22,6 +22,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.foodapp.BackPressHandler
+import com.example.foodapp.NavigationGraphs.ClientBottomNavGraph
+import com.example.foodapp.Panels.ClientPanel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -37,7 +40,7 @@ fun ClientScreen(navController: NavHostController) {
     }
 
     Scaffold(
-        bottomBar = { ClientBottomBar(navController = clientNavController, bottomBarState = bottomBarState)}
+        bottomBar = { ClientBottomBar(navController = clientNavController, bottomBarState = bottomBarState) }
     ) {
         ClientBottomNavGraph(navController = clientNavController, appNavController = navController, bottomBarState = bottomBarState)
     }

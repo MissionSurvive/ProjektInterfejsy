@@ -25,12 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.foodapp.AdminPanel
-import com.example.foodapp.AppScreens
+import com.example.foodapp.Panels.AdminPanel
+import com.example.foodapp.Panels.AppPanel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -156,7 +154,7 @@ fun AccountScreen(navController: NavHostController, appNavController: NavHostCon
                 ) {
                     Button(
                         onClick = {
-                            appNavController.navigate(AppScreens.StartScreen.route) {
+                            appNavController.navigate(AppPanel.StartScreen.route) {
                                 popUpTo(appNavController.graph.findStartDestination().id)
                                 launchSingleTop = true
                             }

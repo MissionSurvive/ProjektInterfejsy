@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.AppScreens
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -11,23 +11,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.foodapp.AdminScreens.HomeScreen
+import com.example.foodapp.BackPressHandler
+import com.example.foodapp.NavigationGraphs.AdminBottomNavGraph
+import com.example.foodapp.Panels.AdminPanel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -43,7 +40,7 @@ fun AdminScreen(navController: NavHostController) {
     }
 
     Scaffold(
-        bottomBar = { AdminBottomBar(navController = adminNavController, bottomBarState= bottomBarState)}
+        bottomBar = { AdminBottomBar(navController = adminNavController, bottomBarState= bottomBarState) }
     ) {
         AdminBottomNavGraph(navController = adminNavController, appNavController = navController, bottomBarState= bottomBarState)
     }

@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.TypeConverters
 
 import android.content.Context
 import android.net.Uri
