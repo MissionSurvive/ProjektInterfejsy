@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -109,6 +110,7 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                     val foodsSalads = dbHandler.getAllFoods("Sałatki")
                     val foodsWraps = dbHandler.getAllFoods("Wrapy")
                     var query by remember { mutableStateOf("") }
+                    var isSearchClicked by remember { mutableStateOf(false) }
                     var burgerSelected by remember { mutableStateOf(true) }
                     var dessertSelected by remember { mutableStateOf(true) }
                     var sideSelected by remember { mutableStateOf(true) }
@@ -155,7 +157,7 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                             }
                             TextField(
                                 value = query,
-                                onValueChange = {newText ->
+                                onValueChange = { newText ->
                                     query = newText
                                 },
                                 modifier = Modifier
@@ -164,17 +166,25 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                     .height(50.dp),
                                 shape = RoundedCornerShape(24.dp),
                                 leadingIcon = {
-                                    Icon(imageVector = Icons.Default.Search,
-                                        contentDescription = "Search icon")
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "Search icon"
+                                    )
                                 },
                                 colors = TextFieldDefaults.textFieldColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
-                                    focusedIndicatorColor =  Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent),
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                ),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     imeAction = ImeAction.Done
                                 ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        isSearchClicked = true
+                                        defaultKeyboardAction(ImeAction.Done)
+                                    }),
                                 placeholder = {
                                     Text(text = "Wyszukaj")
                                 }
@@ -225,8 +235,26 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsBurgers) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsBurgers.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsBurgers,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             if(dessertSelected) {
@@ -241,8 +269,25 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsDesserts) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsDesserts.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsDesserts,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             if(sideSelected) {
@@ -257,8 +302,26 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsSides) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsSides.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsSides,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             if(chickenSelected) {
@@ -273,8 +336,26 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsChicken) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsChicken.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsChicken,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             if(drinksSelected) {
@@ -289,8 +370,26 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsDrinks) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsDrinks.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsDrinks,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             if(pizzaSelected) {
@@ -305,8 +404,26 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsPizza) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsPizza.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsPizza,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             if(saladsSelected) {
@@ -321,8 +438,26 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsSalads) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsSalads.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsSalads,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             if(wrapsSelected) {
@@ -337,8 +472,26 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
-                                FoodCardRow(foods = foodsWraps) { food ->
-                                    menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                if (isSearchClicked) {
+                                    val filteredFoods = foodsWraps.filter { food ->
+                                        food.name.contains(query, ignoreCase = true)
+                                    }
+
+                                    FoodCardRow(
+                                        foods = filteredFoods,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
+                                } else {
+                                    FoodCardRow(
+                                        foods = foodsWraps,
+                                        query = query,
+                                        onClick = { food ->
+                                            menuNavController.navigate("DetailedFoodOrder/${food.id}")
+                                        }
+                                    )
                                 }
                             }
                             Surface(
@@ -549,14 +702,22 @@ fun MenuScreen(context: Context, bottomBarState: MutableState<Boolean>) {
 }
 
 @Composable
-fun FoodCardRow(foods: List<Foods>, onClick: (Foods) -> Unit) {
+fun FoodCardRow(foods: List<Foods>, query: String, onClick: (Foods) -> Unit) {
+    val filteredFoods = if (query.isNotEmpty()) {
+        foods.filter { food ->
+            food.name.contains(query, ignoreCase = true)
+        }
+    } else {
+        foods
+    }
+
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         userScrollEnabled = true
     ) {
-        itemsIndexed(foods) { index, food ->
+        itemsIndexed(filteredFoods) { index, food ->
             FoodCard(
                 image = BitmapFactory.decodeByteArray(food.image, 0, food.image.size),
                 name = food.name,
